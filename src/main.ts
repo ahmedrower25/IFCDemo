@@ -47,7 +47,7 @@ highlighter.events.select.onClear.add(() => {
 })
 
 
-const ifcFilePath = "./src/bim-components/Model.ifc";
+const ifcFilePath = "./Model.ifc";
 
 const file =  await fetch(ifcFilePath);
 const data =  await file.arrayBuffer();
