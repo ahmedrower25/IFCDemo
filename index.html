@@ -3,6 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/frappe-gantt/dist/frappe-gantt.css">
+    <script src="https://cdn.jsdelivr.net/npm/frappe-gantt/dist/frappe-gantt.js"></script> -->
+    <!-- <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"> -->
+    <link rel="stylesheet" href="src/styles.css">
+
     <title>OpenBIM App</title>
     <style>
       * {
@@ -17,7 +22,61 @@
     </style>
   </head>
   <body>  
+   
+
     <div id="app"></div>
     <script type="module" src="/src/main.ts"></script>
+    
+
+<!--     
+<div id="gantt"></div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // Your dynamic data
+    var tasks = [
+        {
+            id: 'Task-1',
+            name: 'Task 1',
+            start: '2024-02-01',
+            end: '2024-02-10',
+            progress: 20
+        },
+        {
+            id: 'Task-2',
+            name: 'Task 2',
+            start: '2024-02-05',
+            end: '2024-02-20',
+            progress: 50
+        },
+        {
+            id: 'Task-3',
+            name: 'Task 3',
+            start: '2024-02-15',
+            end: '2024-02-28',
+            progress: 80
+        }
+    ];
+
+    // Initialize the Gantt chart
+    var gantt = new Gantt("#gantt", tasks, {
+        header_height: 50,
+        column_width: 30,
+        step: 24,
+        view_modes: ['Quarter Day', 'Half Day', 'Day', 'Week', 'Month'],
+        bar_height: 20,
+        bar_corner_radius: 3,
+        arrow_curve: 5,
+        padding: 18,
+        view_mode: 'Week',
+        date_format: 'YYYY-MM-DD',
+        custom_popup_html: function(task) {
+            return '<div class="details-container"><h5>' + task.name + '</h5><p>Start: ' + task._start.format('MMM D, YYYY') + '</p><p>End: ' + task._end.format('MMM D, YYYY') + '</p><p>Progress: ' + task.progress + '%</p></div>';
+        }
+    });
+});
+</script>
+
+    </div> -->
   </body>
 </html>

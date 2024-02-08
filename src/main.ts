@@ -3,6 +3,7 @@ import * as THREE from "three"
 import { ExampleTool } from "./bim-components"
 
 
+
 // Setup the viewer
 const viewer = new OBC.Components();
 
@@ -50,10 +51,17 @@ const culler = new OBC.ScreenCuller(viewer)
 await culler.setup()
 cameraComponent.controls.addEventListener("sleep", () => culler.needsUpdate = true)
 
-const propertiesProcessor = new OBC.IfcPropertiesProcessor(viewer)
+
+
+
+
 highlighter.events.select.onClear.add(() => {
   propertiesProcessor.cleanPropertiesList()
 })
+
+// const propsManager = new OBC.IfcPropertiesManager(viewer);
+// propertiesProcessor.propertiesManager = propsManager;
+
 
 
 const ifcFilePath = "./Model.ifc";
@@ -63,15 +71,46 @@ const buffer = new Uint8Array(data);
 const model =  await ifcLoader.load(buffer,"example");
 scene.add(model);
 
-ifcLoader.onIfcLoaded.add(async (model) => {
+const propertiesProcessor = new OBC.IfcPropertiesProcessor(viewer)
+const propertiesUI = propertiesProcessor.uiElement
+
+propertiesUI.get("propertiesWindow").visible = true;
+
 propertiesProcessor.process(model);
-highlighter.events.select.onHighlight.add((Selection) =>{
-  const fragmentID = Object.keys(Selection)[0];
-  const expressID = Number([...Selection[fragmentID]][0]);
-  propertiesProcessor.renderProperties(model, expressID);
-})
-highlighter.update();
+
+const highlighterEvents = highlighter.events;
+highlighterEvents.select.onClear.add(() => {
+  propertiesProcessor.cleanPropertiesList();
 });
+
+highlighterEvents.select.onHighlight.add(
+(selection) => {
+const fragmentID = Object.keys(selection)[0];
+const expressID = Number([...selection[fragmentID]][0]);
+let model
+for (const group of ifcManager.groups) {
+const fragmentFound = Object.values(group.keyFragments).find(id => id === fragmentID)
+if (fragmentFound) model = group;
+}
+propertiesProcessor.renderProperties(model, expressID);
+}
+);
+
+// ifcLoader.onIfcLoaded.add(async (model) => {
+// propertiesProcessor.process(model);
+// highlighter.events.select.onHighlight.add((Selection) =>{
+//   const fragmentID = Object.keys(Selection)[0];
+//   const expressID = Number([...Selection[fragmentID]][0]);
+//   propertiesProcessor.renderProperties(model, expressID);
+// })
+// highlighter.update();
+// });
+
+// propsManager.onRequestFile.add(async () => {
+// const fetched = await fetch(ifcFilePath);
+// propsManager.ifcToExport = await fetched.arrayBuffer();
+// })
+
 
 const exampleTool = new ExampleTool(viewer)
 await exampleTool.setup({
@@ -102,18 +141,33 @@ await modelTree.init();
 modelTree.update(['storeys', 'entities']);
 
 
-// modelTree.onSelected.add((filter) => {
-//   highlighter.highlightByID('select', filter, true, true);
-//   });
-//   modelTree.onHovered.add((filter) => {
-//   highlighter.highlightByID('hover', filter);
-//   });
+const propsFinder = new OBC.IfcPropertiesFinder(viewer);
+await propsFinder.init();
+propsFinder.uiElement.get("queryWindow").visible = false;
+
+
+propsFinder.onFound.add(result => {
+highlighter.highlightByID("select", result);
+})
+
+const clipper = new OBC.EdgesClipper(viewer);
+clipper.enabled = true;
+
+const styler = new OBC.FragmentClipStyler(viewer);
+await styler.setup();
+await styler.update();
 
 const mainToolbar = new OBC.Toolbar(viewer)
+mainToolbar.isResizeable 
+
 mainToolbar.addChild(
   
   exploder.uiElement.get("main"),
-  modelTree.uiElement.get("main")
+  modelTree.uiElement.get("main"),
+  propsFinder.uiElement.get("main"),
+  propertiesUI.get("main"),
+  styler.uiElement.get("mainButton")
+  
   
 )
 viewer.ui.addToolbar(mainToolbar)
@@ -127,18 +181,36 @@ dimensionsToolbar.addChild(
 )
 viewer.ui.addToolbar(dimensionsToolbar)
 
+const classifications = classifier.get();
+// const classes = {};
+const classNames = Object.keys(classifications.entities);
+
+// for (const name of classNames) {
+// classes[name] = true;
+// }
+
+// window.addEventListener("thatopen", async(event: any)=> {
+//  const {name, payload} = event.detail;
+//  if(name === "openmodel") {
+//   const {name,buffer} = payload;
+//   const model = await ifcLoader.load(buffer, name);
+//   const scene = viewer.scene.get();
+//   scene.add(model)
+//  }
+
+// })
+
+
+propsFinder.enabled = true;
+
+console.log(propsFinder)
+
+
+console.log(classNames)
+
+
+// console.log(ifcManager.list);
 
 
 
-window.addEventListener("thatopen", async(event: any)=> {
- const {name, payload} = event.detail;
- if(name === "openmodel") {
-  const {name,buffer} = payload;
-  const model = await ifcLoader.load(buffer, name);
-  const scene = viewer.scene.get();
-  scene.add(model)
- }
-
-})
-
-console.log(ifcManager.list);
+    
