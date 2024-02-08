@@ -63,7 +63,7 @@ highlighter.events.select.onClear.add(() => {
 // propertiesProcessor.propertiesManager = propsManager;
 
 
-
+console.log("1");
 const ifcFilePath = "./Model.ifc";
 const file =  await fetch(ifcFilePath);
 const data =  await file.arrayBuffer();
