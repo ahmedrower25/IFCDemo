@@ -32,7 +32,7 @@ postproduction.enabled = true
 //postproduction.customEffects.excludedMeshes.push(grid.get())
 
 //Setup Bacground Color
-const backgroundColor = new THREE.Color("white");
+const backgroundColor = new THREE.Color("black");
 const materialManager = new OBC.MaterialManager(viewer);
 materialManager.setBackgroundColor(backgroundColor);
 
