@@ -84,15 +84,15 @@ highlighterEvents.select.onClear.add(() => {
 });
 
 highlighterEvents.select.onHighlight.add(
-(selection) => {
+async (selection) => {
 const fragmentID = Object.keys(selection)[0];
 const expressID = Number([...selection[fragmentID]][0]);
-let model
-for (const group of ifcManager.groups) {
-const fragmentFound = Object.values(group.keyFragments).find(id => id === fragmentID)
-if (fragmentFound) model = group;
-}
-propertiesProcessor.renderProperties(model, expressID);
+let fGroup = ifcManager.groups[0];
+// for (const group of ifcManager.groups) {
+// const fragmentFound = Object.values(group.keyFragments).find(id => id === fragmentID)
+// if (fragmentFound) model = group;
+// }
+await propertiesProcessor.renderProperties(fGroup, expressID);
 }
 );
 
